@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 import Toast from '../Component/Toast';
-// 
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 export default function Login() {
   const navigate=useNavigate();
 const accounts = [{email:'test@email.com',password:'1234'}]
@@ -32,11 +33,6 @@ function toggleShow(){
   setShow(!show)
 }
 
-  function handleUsername(e: React.ChangeEvent<HTMLInputElement>){
-    setUsername(e.target.value)
-// console.log(e.target.value)
-
-  }
   function handleEmail(e:React.ChangeEvent<HTMLInputElement>){
 
     setUsermail(e.target.value)
@@ -45,9 +41,9 @@ function toggleShow(){
 
     setUserpassword(e.target.value)
   }
-  function handleSubmit(e:React.SubmitEvent<HTMLFormElement>){
+  function handleSubmit(e?:React.SubmitEvent<HTMLFormElement>){
 console.log("form submit")
-e.preventDefault();
+if(e) e.preventDefault();
 setResponse("")
 setUsermail("")
 setUsername("")
@@ -79,13 +75,54 @@ navigate('/dashboard' )
 },0)
 
   }
-
+interface GoogleJwtPayload {
+  email?: string;
+  name?: string;
+  picture?: string;
+  sub?: string;
+}
 
   return (
-    <div className='basis-1/2'>
+        <div className="h-screen flex bg-gradient-to-br from-pink-300  via-to-pink-100 to-purple-300   flex-col items-center p-2  justify-center">
+    <div className="flex shadow-500/50 shadow-xl/30 h-auto bg-gray-100 border-3 w-full  md:w-2/3 overflow-hidden rounded-xl flex-wrap border-purple-500">
+    <div className=" sm:w-1/2  hidden md:block relative overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-violet-700 via-purple-500 to-pink-500">
+  
+  <div className="absolute w-64 h-64 rounded-full bg-purple-400/40 blur-3xl -top-16 -left-16" />
+  <div className="absolute w-56 h-56 rounded-full bg-pink-400/30 blur-3xl -bottom-12 -right-12" />
+
+  <div className="xs:hidden  text-center px-8 z-10 animate-pulse">
+    <div className="text-white text-3xl font-bold mb-3">Welcome Back</div>
+    <p className="text-purple-200 text-sm">Sign in to continue your journey</p>
+  </div>
+
+</div>
+    <div className='w-full sm:w-1/2'>
       <form action="/userForm"  className='p-3 py-9 text-xs px-5 ' method="post" onSubmit={handleSubmit}>
       <div className='text-lg font-medium text-center mb-3 '>Sign in Account</div>
-      <p className='py-3 px-3 text-center text-gray-600 border-1 border-gray-200 mx-2 cursor-pointer mt-2 rounded-md'>Sign in with Google</p>
+      
+      <div className='py-3 px-3 text-center items-center justify-center flex text-gray-600 mx-2 cursor-pointer mt-2 rounded-md'>
+        <GoogleLogin use_fedcm_for_prompt={false} logo_alignment='center' shape='pill'
+       onSuccess={(credentialResponse)=>{
+        let token=credentialResponse.credential
+        console.log(credentialResponse)
+        if(!token) return;
+        console.log(jwtDecode<GoogleJwtPayload>(token))
+        let res=jwtDecode<GoogleJwtPayload>(token)
+        if(!res) return;
+        console.log("response",res)
+        if(res && accounts[0].email==res.email)
+          {
+ navigate("/dashboard")
+          }
+          else {
+          //  googleLogout();
+console.log(res)
+setError(true)
+            setResponse("Main id is not same as the Default")
+          }
+      }}
+        onError={()=> handleSubmit()}/>
+      </div>
       <div>
         <div className="flex px-10 my-4">
             <div className='flex-1 border-t-1 mt-2 border-gray-300 '></div>
@@ -97,13 +134,6 @@ navigate('/dashboard' )
     </label>
 
 <input type="email" ref={inputFocus} required className='border-gray-200 my-2 text-xs w-full p-2 rounded-md border-2' placeholder='Enter your email address' onChange={handleEmail} value={usermail} name='email' id='email'/>
-</div>
-  <div>
-    <label htmlFor="username" className='text-gray-600' id='user_name'>
-      User Name
-    </label>
-
-<input type="name"  placeholder='Enter your Full name' className='my-2 border-gray-200 text-xs w-full p-2 rounded-md border-2' onChange={handleUsername} value={username} name='name'  id='username'/>
 </div>
 
 <div>
@@ -125,5 +155,7 @@ navigate('/dashboard' )
 <p>Don't have an account? <a className='font-bold cursor-pointer' href='/signup'>Sign Up</a></p>
   </form>
     </div>
+    </div>
+</div>
   )
 }
