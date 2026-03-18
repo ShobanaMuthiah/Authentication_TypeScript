@@ -54,45 +54,98 @@ setUsername("")
 setUserpassword("")
 setToast(false)
 console.log(username,usermail,userpassword)
+          fetch("http://localhost:5000/user/register",{
+            method:"POST",
+            credentials:"include",
 
-setTimeout(()=>{
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({username:username, email: usermail, password: userpassword })
+          })
+          .then(res=>res.json())
+          .then(data=>{
+if(data.status==='Success') {
+  setResponse(data.message)
+  setError(false)
+  navigate('/')
+  return;
+}
+setResponse(data.message)
+setError(true)
+          })
 
-
-setResponse("Successfully Logged in")
-setError(false)
-navigate('/' )
-
-},0)
 
   }
 
+  const handleOauth = (e:{}) => {
+    // console.log(e)
+    setResponse("")
+    setUsermail("")
+    setUsername("")
+    setUserpassword("")
+    setToast(false)
+    console.log(e)
 
+
+
+    fetch("http://localhost:5000/user/loginOAuth", {
+      method: "POST",
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify( e )
+    }).then(res => res.json())
+      .then(data => {
+        console.log(data)
+
+        setResponse(data.message)
+        if (data.status === "Success") {
+          setError(false)
+          navigate('/')
+          return;
+        }
+        setError(true)
+
+      })
+      .catch(error => {
+
+        setError(true)
+
+
+        setResponse(error.message)
+      })
+
+
+  }
 
   return (
     <>
-        <div className="h-screen flex bg-gradient-to-br from-pink-300  via-to-pink-100 to-purple-300   flex-col items-center p-2  justify-center">
-        <div className="flex shadow-500/50 shadow-xl/30 h-auto bg-gray-100 border-3 w-full  md:w-2/3 overflow-hidden rounded-xl flex-wrap border-purple-500">
-        <div className="hidden xs:w-1/2 relative overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-violet-700 via-purple-500 to-pink-500">
-      
+    <div className="h-screen flex bg-gradient-to-br from-pink-300  via-to-pink-100 to-purple-300   flex-col items-center p-2  justify-center">
+      <div className="flex shadow-500/50 shadow-xl/30 h-auto bg-gray-100 border-3 w-full  md:w-2/3 overflow-hidden rounded-xl flex-wrap border-purple-500">
+        <div className=" sm:w-1/2  hidden md:block relative overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-violet-700 via-purple-500 to-pink-500">
+
       <div className="absolute w-64 h-64 rounded-full bg-purple-400/40 blur-3xl -top-16 -left-16" />
       <div className="absolute w-56 h-56 rounded-full bg-pink-400/30 blur-3xl -bottom-12 -right-12" />
     
-      <div className="text-center px-8 z-10 animate-pulse">
+      <div className=" xs:hidden align-center text-center px-8 z-10 animate-pulse">
         <div className="text-white text-3xl font-bold mb-3">Join Us</div>
 <p className="text-purple-200 text-sm">Create your account to get started</p>
       </div>
     
     </div>
 
-    <div className='w-full xs:w-1/2'>
-      <form action="/userForm"  className='p-3 py-9 text-xs px-5 ' method="post" onSubmit={handleSubmit}>
+    <div className='w-full md:w-1/2'>
+      <form action="/signUp"  className='p-3 py-9 text-xs px-5 ' method="post" onSubmit={handleSubmit}>
       <div className='text-lg font-medium text-center mb-3 '>Create an Account</div>
             <div className='py-3 px-3 text-center items-center justify-center flex text-gray-600  mx-2 cursor-pointer mt-2 rounded-md'>
-        <GoogleLogin text='signup_with' use_fedcm_for_prompt={false} logo_alignment='center' shape='pill'
+        <GoogleLogin text='signup_with' context='signup' use_fedcm_for_prompt={false} logo_alignment='center' shape='pill'
        onSuccess={(credentialResponse)=>{
         console.log(credentialResponse)
- setResponse("Successfuly Created your account")
- navigate("/dashboard")
+        handleOauth(credentialResponse)
+//  setResponse("Successfuly Created your account")
+//  navigate("/")
 
 
       }}
@@ -123,7 +176,7 @@ navigate('/' )
       Password
     </label>
 <div className='relative '>
-<input type={show?"text":"password"} required className='my-2 border-gray-200 text-xs w-full p-2 rounded-md border-2 pr-10' placeholder='Create your password' onChange={handlePassword} value={userpassword} name='password' id='password'/>
+<input type={show?"text":"password"}  className='my-2 border-gray-200 text-xs w-full p-2 rounded-md border-2 pr-10' placeholder='Create your password' onChange={handlePassword} value={userpassword} name='password' id='password'/>
 <span onClick={toggleShow} className='absolute right-3 top-1/2 -translate-y-1/2 text-lg  cursor-pointer'>{show?<FaRegEye />: <FaRegEyeSlash />}</span>
 </div>
 </div>
