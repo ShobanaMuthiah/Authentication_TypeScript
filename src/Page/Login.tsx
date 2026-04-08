@@ -3,10 +3,17 @@ import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 import Toast from '../Component/Toast';
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+// import { jwtDecode } from 'jwt-decode';
+import { socket } from '../utils/socket';
+import { api } from '../utils/api';
+import { useDispatch } from 'react-redux';
+import { signInFailure, signInStart, signInSuccess } from '../Context/Slice/UserSlice';
+import axios from 'axios';
 export default function Login() {
   const navigate = useNavigate();
-  const accounts = [{ email: 'test@email.com', password: '1234' }]
+  // const {setUser}=useAuth()
+  // const setUser=
+  const dispatch = useDispatch();
   const inputFocus = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -42,7 +49,7 @@ export default function Login() {
     setUserpassword(e.target.value)
   }
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     // console.log(e)
     // setResponse("")
@@ -51,51 +58,51 @@ export default function Login() {
     // setUserpassword("")
     setToast(false)
     console.log(usermail)
+    dispatch(signInStart())
+    try {
 
+    const res = await api.post("/user/LoginForm",
+      { email: usermail, password: userpassword }
+    )
+      console.log(res)
 
-
-    fetch("http://localhost:5000/user/LoginForm", {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email: usermail, password: userpassword })
-    }).then(res => res.json())
-      .then(data => {
-        console.log(data)
+      if (res.statusText === "OK") {
+        
+        let data = res.data
 
         setResponse(data.message)
         if (data.status === "Success") {
-          fetch("http://localhost:5000/user/refresh",{
-            method:"POST",
-            credentials:"include",
-            headers:{
-              "Authorization":"Bearer-Type"
-            }
-          })
-          .then(res=>res.json())
-          .then(data=>{
-
-            if(data.accessToken) navigate("/dashboard")
-          })
+          dispatch(signInSuccess(data.user))
+          if (!socket.connected) socket.connect();
+          socket.emit('join', data.user.id);
+          navigate("/dashboard")
           setError(false)
           return;
         }
+        else {
+          setError(true)
+          setResponse(data.message)
+        }
+      }
+      else {
+        console.log("error: ")
         setError(true)
+        setResponse(res.data.message)
+      }
+    }
+catch (error) {
 
-      })
-      .catch(error => {
+      setError(true)
+      if(axios.isAxiosError(error)){
+        setResponse(error.response?.data?.message??"Login failed")
+      }
+      else{
+        setResponse(error as string)
 
-        setError(true)
-
-
-        setResponse(error.message)
-      })
-
-
+      }
+    }
   }
-  const handleOauth = (e:{}) => {
+  const handleOauth = async (e: {}) => {
     console.log(e)
     setResponse("")
     setUsermail("")
@@ -105,18 +112,12 @@ export default function Login() {
     // console.log(e)
 
 
-
-    fetch("http://localhost:5000/user/loginOAuth", {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify( e )
-    }).then(res => res.json())
-      .then(data => {
-        console.log(data)
-
+try {
+    const res = await api.post("/user/loginOAuth", e
+    )
+    
+      if (res.statusText === "OK") {
+        const data = res.data
         setResponse(data.message)
         if (data.status === "Success") {
           setError(false)
@@ -124,15 +125,25 @@ export default function Login() {
           return;
         }
         setError(true)
+      }
+      else{
+      setError(true)
+        setResponse(res.data.message)
 
-      })
-      .catch(error => {
+      }
 
-        setError(true)
+    } catch (error) {
 
+      setError(true)
+      if(axios.isAxiosError(error)){
+        setResponse(error.response?.data?.message??"Login failed")
+      }
+      else{
+        setResponse(error as string)
 
-        setResponse(error.message)
-      })
+      }
+    }
+
 
 
   }
@@ -153,20 +164,20 @@ export default function Login() {
 
         </div>
         <div className='w-full md:w-1/2'>
-          <form action="http://localhost:5000/user/LoginForm" className='p-3 py-9 text-xs px-5 ' method="post" onSubmit={handleSubmit}>
+          <form className='p-3 py-9 text-xs px-5 ' method="post" onSubmit={handleSubmit}>
             <div className='text-lg font-medium text-center mb-3 '>Sign in Account</div>
 
             <div className='py-3 px-3 text-center items-center justify-center flex text-gray-600 mx-2 cursor-pointer mt-2 rounded-md'>
-          <GoogleLogin text='signin_with' context='signin' use_fedcm_for_prompt={false} logo_alignment='center' shape='pill'
-         onSuccess={(credentialResponse)=>{
-          console.log(credentialResponse)
-          handleOauth(credentialResponse)
-  //  setResponse("Successfuly Created your account")
-  //  navigate("/")
-  
-  
-        }}
-          onError={()=>console.error("sing up failed")}/>
+              <GoogleLogin text='signin_with' context='signin' use_fedcm_for_prompt={false} logo_alignment='center' shape='pill'
+                onSuccess={(credentialResponse) => {
+                  console.log(credentialResponse)
+                  handleOauth(credentialResponse)
+                  //  setResponse("Successfuly Created your account")
+                  //  navigate("/")
+
+
+                }}
+                onError={() => console.error("sing up failed")} />
             </div>
             <div>
               <div className="flex px-10 my-4">
