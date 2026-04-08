@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "commonjs",
+    // "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "target": "es2020",
+    // For nodejs:
+    // "lib": ["esnext"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
+    // Other Outputs
+    "sourceMap": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "strict": true,
+    "noUncheckedSideEffectImports": true,
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false
+  }
+}
