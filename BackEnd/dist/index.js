@@ -20,7 +20,7 @@ const httpServer = (0, node_http_1.createServer)(app);
 data_source_1.AppDataSource.initialize();
 const io = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: ["https://chat-app-type-script.vercel.app/"],
+        origin: ["https://chat-app-type-script.vercel.app"],
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -29,7 +29,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({
-    origin: "https://chat-app-type-script.vercel.app/",
+    origin: "https://chat-app-type-script.vercel.app",
     methods: ['get', 'post', 'patch', 'put', 'delete'],
     credentials: true
 }));
