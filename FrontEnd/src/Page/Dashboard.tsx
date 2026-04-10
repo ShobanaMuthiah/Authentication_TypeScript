@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import SideBar from '../Component/SideBar';
 import ChatArea from '../Component/ChatArea';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import type { RootState } from '../Context/store';
 
 export default function Dashboard() {
   // const { user } = useAuth();
   const user=useSelector((state:RootState)=>state.user.user)
-  const dispatch=useDispatch();
+  // const dispatch=useDispatch();
   const [activeChatId, setActiveChatId] = useState<number | null>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [otherUserId, setOtherUserId] = useState<number>(0);

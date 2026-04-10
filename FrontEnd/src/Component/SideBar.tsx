@@ -42,7 +42,7 @@ const payloads = chats.map((e: any) => ({
 }));
   setUsers(payloads)
   setNewchat(true)
-console.log("users: ",users)
+console.log("users: ",users,newchat)
 
   return;
 }

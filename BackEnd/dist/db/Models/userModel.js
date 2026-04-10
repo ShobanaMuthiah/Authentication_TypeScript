@@ -45,7 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserEntity = void 0;
 const typeorm_1 = require("typeorm");
 const bcrypt = __importStar(require("bcryptjs"));
-const chatModels_js_1 = require("./chatModels.js");
+const chatModels_1 = require("./chatModels");
 let UserEntity = class UserEntity {
     async hashPassword() {
         console.log("hashing password");
@@ -81,13 +81,13 @@ __decorate([
     __metadata("design:type", String)
 ], UserEntity.prototype, "username", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => chatModels_js_1.Chats, (sentChat) => sentChat.user),
+    (0, typeorm_1.OneToMany)(() => chatModels_1.Chats, (sentChat) => sentChat.user),
     __metadata("design:type", Array)
-], UserEntity.prototype, "sentMessages", void 0);
+], UserEntity.prototype, "sender", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => chatModels_js_1.Chats, (receivedChat) => receivedChat.receiver),
+    (0, typeorm_1.OneToMany)(() => chatModels_1.Chats, (receivedChat) => receivedChat.receiver),
     __metadata("design:type", Array)
-], UserEntity.prototype, "receivedMessages", void 0);
+], UserEntity.prototype, "receiver", void 0);
 exports.UserEntity = UserEntity = __decorate([
     (0, typeorm_1.Entity)('users')
 ], UserEntity);

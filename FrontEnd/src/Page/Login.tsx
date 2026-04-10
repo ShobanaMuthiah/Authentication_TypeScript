@@ -86,6 +86,7 @@ export default function Login() {
       }
       else {
         console.log("error: ")
+        signInFailure(true)
         setError(true)
         setResponse(res.data.message)
       }
@@ -107,6 +108,7 @@ catch (error) {
     setResponse("")
     setUsermail("")
     setUsername("")
+    console.log(username)
     setUserpassword("")
     setToast(false)
     // console.log(e)

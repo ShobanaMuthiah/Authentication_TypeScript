@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chats = void 0;
 const typeorm_1 = require("typeorm");
-const userModel_js_1 = require("./userModel.js");
+const userModel_1 = require("./userModel");
 let Chats = class Chats {
 };
 exports.Chats = Chats;
@@ -28,18 +28,18 @@ __decorate([
     __metadata("design:type", Number)
 ], Chats.prototype, "userId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => userModel_js_1.UserEntity, (sentUser) => sentUser.sentMessages),
+    (0, typeorm_1.ManyToOne)(() => userModel_1.UserEntity, (sentUser) => sentUser.sender),
     (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
-    __metadata("design:type", userModel_js_1.UserEntity)
+    __metadata("design:type", userModel_1.UserEntity)
 ], Chats.prototype, "user", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'receiver_id' }),
     __metadata("design:type", Number)
 ], Chats.prototype, "receiverId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => userModel_js_1.UserEntity, (receivedUser) => receivedUser.receivedMessages),
+    (0, typeorm_1.ManyToOne)(() => userModel_1.UserEntity, (receivedUser) => receivedUser.receiver),
     (0, typeorm_1.JoinColumn)({ name: 'receiver_id' }),
-    __metadata("design:type", userModel_js_1.UserEntity)
+    __metadata("design:type", userModel_1.UserEntity)
 ], Chats.prototype, "receiver", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),

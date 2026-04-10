@@ -5,13 +5,17 @@ import { entities } from './Models/index'
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: CONFIGS.HOST,
-    username: CONFIGS.DB_USER,
-    password: CONFIGS.DB_PASSWORD,
-    database: CONFIGS.DATABASE,
-    synchronize: true,
-    logging: true,
-    entities,
+    url:CONFIGS.DATABASE_URL,
+    ssl:true,
+    extra:{
+        ssl:{
+            rejectUnauthorized:false,
+        }
+    },
+    synchronize: false,
+    logging: false,
+    entities:["dist/Models/*.js"],
+    migrations:["dist/db/migrations/*.js"],
     // migrations: ["src/db/migrations/*.ts"],
     seeds: MainSeeder,
     // factories: ['dist/db/seeders/factories/*.ts']
