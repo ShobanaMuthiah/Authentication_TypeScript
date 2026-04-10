@@ -66,7 +66,8 @@ export default function Login() {
     )
       console.log(res)
 
-      if (res.statusText === "OK") {
+      if (res.status === 200) {
+          // setError(false)
         
         let data = res.data
 
@@ -118,7 +119,7 @@ try {
     const res = await api.post("/user/loginOAuth", e
     )
     
-      if (res.statusText === "OK") {
+      if (res.status === 200) {
         const data = res.data
         setResponse(data.message)
         if (data.status === "Success") {
