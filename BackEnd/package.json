@@ -11,6 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "typeorm": "typeorm-ts-node-esm",
     "migration:run": "npm run typeorm migration:run -- -d src/db/data-source.ts",
+    "migration:run:prod": "typeorm migration:run -d dist/db/data-source.js",
     "migration:generate": "npm run typeorm migration:generate ./src/db/migrations/migration -- -d src/db/data-source.ts"
   },
   "author": "",
