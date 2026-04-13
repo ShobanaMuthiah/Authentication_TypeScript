@@ -7,7 +7,7 @@ import { Chats } from "./Models/chatModels";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    url:process.env.DATABASE_URL,
+    url:CONFIGS.DATABASE_URL,
     ssl:true,
     extra:{
         ssl:{
