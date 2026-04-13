@@ -149,3 +149,34 @@ export async function oAuth(req: Request, res: Response, next: NextFunction) {
     res.status(200).json({ status: "Success",accessToken, message: "Logged in Successfully" }).end()
 
 }
+
+
+export const searchUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { query, currentUserId } = req.query;
+
+    if (!query) {
+      return res.status(200).json([]);
+    }
+
+    const users = await userRepository
+      .createQueryBuilder("users")
+      .select(["users.id", "users.username"])
+      .where("users.username ILIKE :query", {
+        query: `%${query}%`,
+      })
+      .andWhere("users.id != :currentUserId", {
+        currentUserId,
+      })
+      .limit(10)
+      .getMany();
+
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};

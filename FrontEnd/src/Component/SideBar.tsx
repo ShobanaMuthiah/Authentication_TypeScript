@@ -32,19 +32,8 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
         });
         let chats = res.data.chats;
         if (chats.length === 0) {
-          const response = await api.get('/user/getAll')
-          chats = response.data
-          console.log(chats)
-          const payloads = chats.map((e: any) => ({
-            id: e.id,
-            // sendid:e.id,
-            receiverid: e.id,
-            username: e.username
-          }));
-          setUsers(payloads)
-          setNewchat(true)
-          console.log("users: ", users, newchat)
-
+          setNewchat(true);
+          setUsers([]);
           return;
         }
         setNewchat(false)
@@ -61,10 +50,48 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
     fetchChats();
   }, [currentUserId]);
 
+  useEffect(() => {
+    const delay = setTimeout(async () => {
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchUser(e.target.value)
-  }
+      if (!searchUser.trim()) {
+        try {
+          const res = await api.get("/chat/userchat", {
+            params: { userId: currentUserId }
+          });
+
+          setUsers(res.data.chats || []);
+        } catch (err) {
+          console.error("Reload chats failed", err);
+        }
+
+        return;
+      }
+
+      try {
+        const res = await api.get("/user/search", {
+          params: {
+            query: searchUser,
+            currentUserId
+          }
+        });
+
+        setUsers(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+
+    }, 400);
+
+    return () => clearTimeout(delay);
+
+  }, [searchUser, currentUserId]);
+
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchUser(e.target.value);
+  };
 
   const handleUserClick = async (selectedUser: UserProps) => {
     try {
@@ -94,7 +121,10 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
     <Sidebar aria-label="Chat sidebar" className="h-full w-full">
       <SidebarItems>
         <SidebarItemGroup>
-          <SidebarItem className=" py-4 font-bold text-gray-800 dark:text-white">
+          <SidebarItem
+            className="py-4 font-bold text-gray-800 dark:text-white"
+            onClick={() => setNewchat(!newchat)}
+          >
 
             <div className="flex items-center gap-2">
               <Avatar
@@ -105,11 +135,12 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
               <span>New Chat</span>
             </div>
           </SidebarItem>
-          <div className="hidden">
-            <TextInput id='new_chat' type="text" placeholder="Search User" value={searchUser} onChange={(e) => handleChange(e)} />
+          {newchat && (
+            <div className="px-4 py-2">
+              <TextInput id='new_chat' type="text" placeholder="Search User" value={searchUser} onChange={(e) => handleChange(e)} />
 
 
-          </div>
+            </div>)}
           <div className="px-5 py-4 text-xl font-bold text-gray-800 dark:text-white">Chats</div>
 
           {users.map((u) => (
@@ -127,8 +158,17 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
             </SidebarItem>
           ))}
 
+          {users.length === 0 && newchat && (
+            <div className="p-4 text-sm text-center text-gray-500">
+              Start New Conversation
+            </div>
+          )}
 
-          {users.length === 0 && <div className="p-4 text-sm text-center text-gray-500">No chats yet</div>}
+          {users.length === 0 && !newchat && (
+            <div className="p-4 text-sm text-center text-gray-500">
+              No chats yet
+            </div>
+          )}
         </SidebarItemGroup>
       </SidebarItems>
     </Sidebar>
