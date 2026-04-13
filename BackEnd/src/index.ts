@@ -16,13 +16,6 @@ const app = express();
 const httpServer = createServer(app);
 AppDataSource.initialize()
 
-app.use(cors(
-    {
-        origin: "https://chat-app-type-script.vercel.app",
-        methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-        credentials: true
-    }
-))
 const io = new Server(httpServer, {
     cors: {
         origin: ["https://chat-app-type-script.vercel.app"],
@@ -32,11 +25,19 @@ const io = new Server(httpServer, {
 })
 
 
-app.options("*",cors())
+// app.options("*",cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieparser())
 
+
+app.use(cors(
+    {
+        origin: "https://chat-app-type-script.vercel.app",
+        methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+        credentials: true
+    }
+))
 
 io.on("connection", (socket) => {
     console.log("Server is connecting", socket.id)
