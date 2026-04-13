@@ -8,11 +8,6 @@ exports.AppDataSource = new typeorm_1.DataSource({
     type: "postgres",
     url: process.env.DATABASE_URL,
     ssl: true,
-    extra: {
-        ssl: {
-            rejectUnauthorized: false,
-        }
-    },
     synchronize: true,
     logging: true,
     entities: [userModel_1.UserEntity, chatModels_1.Chats],
