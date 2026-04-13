@@ -18,7 +18,7 @@ AppDataSource.initialize()
 
 const io = new Server(httpServer, {
     cors: {
-        origin: ["https://chat-app-type-script.vercel.app"],
+        origin: ["https://chat-app-type-script.vercel.app","http://localhost:5173"],
         methods:["GET","POST"],
         credentials: true
     }
@@ -33,7 +33,7 @@ app.use(cookieparser())
 
 app.use(cors(
     {
-        origin: "https://chat-app-type-script.vercel.app",
+        origin: ["https://chat-app-type-script.vercel.app","http://localhost:5173"],
         methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
         credentials: true
     }
