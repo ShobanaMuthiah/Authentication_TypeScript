@@ -9,7 +9,7 @@ interface UserProps {
   username: string;
   receiverid:number;
   receiver:string;
-  userId:number;
+  sendid:number;
 }
 
 interface SideBarProps {
@@ -19,7 +19,6 @@ interface SideBarProps {
 }
 
 export default function SideBar({ currentUserId, onChatSelect, activeChatId }: SideBarProps) {
-  console.log("current user id: ",currentUserId)
   const [users, setUsers] = useState<UserProps[]>([]);
   const [searchUser,setSearchUser]=useState<string>("")
   const [newchat,setNewchat]=useState<boolean>(false)
@@ -37,7 +36,7 @@ if(chats.length===0){
   console.log(chats)
 const payloads = chats.map((e: any) => ({
   id: e.id,
-  // userId:e.id,
+  // sendid:e.id,
   receiverid:e.id,
   username: e.username
 }));
@@ -70,13 +69,13 @@ const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
     try {
       console.log("selected user: ",selectedUser)
       let receiver_id
-      if(!selectedUser.userId){
+      if(!selectedUser.sendid){
         receiver_id=selectedUser.id
       }
-      else if(selectedUser.userId && currentUserId===selectedUser.userId){
+      else if(selectedUser.sendid && currentUserId===selectedUser.sendid){
         receiver_id=selectedUser.receiverid}
       else{
-        receiver_id=selectedUser.userId}
+        receiver_id=selectedUser.sendid}
 
       const payload = { userId: currentUserId, receiverId: receiver_id };
       const res = await api.post("/chat/getChat", payload);
@@ -111,7 +110,7 @@ const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
               label={""}
               labelColor="success"
             >
-              {u.userId===currentUserId?u.receiver:u.username}
+              {u.sendid===currentUserId?u.receiver:u.username}
             </SidebarItem>
           ))}
           
