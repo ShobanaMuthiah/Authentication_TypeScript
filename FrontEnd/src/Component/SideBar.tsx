@@ -110,7 +110,9 @@ const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
               label={""}
               labelColor="success"
             >
-              {u.sendid===currentUserId?u.username:u.receiver}
+              {u.sendid?
+              (u.sendid===currentUserId?u.username:u.receiver):
+              u.username}
             </SidebarItem>
           ))}
           

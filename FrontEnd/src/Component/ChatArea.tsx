@@ -43,9 +43,15 @@ export default function ChatArea({ initialMessages, currentUserId, otherUserId,r
         setMessages((prev) => [...prev, data]);
       }
     };
-
+    if(currentUserId){
+      socket.connect();
+      socket.emit("join",currentUserId)
+    }
     socket.on("receiveMessage", handleReceiveMessage);
-    return () => socket.off("receiveMessage", handleReceiveMessage);
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+      // socket.disconnect();
+    }
   }, [currentUserId, otherUserId]);
 
   const sendMessage = () => {

@@ -64,7 +64,7 @@ try{
         "Content-Type": "application/json"
       }
     })
-    if (res.statusText === "OK") {
+    if (res.status === 200) {
       const data = res.data
       if (data.status === 'Success') {
         setResponse(data.message)
@@ -110,7 +110,7 @@ setError(true)
         "Content-Type": "application/json"
       }
     })
-      if(res.statusText==="OK" ){
+      if(res.status===200 ){
         const data=res.data
         console.log(data)
 
