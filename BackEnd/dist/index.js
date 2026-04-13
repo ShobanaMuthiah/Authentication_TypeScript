@@ -18,9 +18,15 @@ const chatSockets_1 = require("./Sockets/chatSockets");
 const app = (0, express_1.default)();
 const httpServer = (0, node_http_1.createServer)(app);
 data_source_1.AppDataSource.initialize();
+app.use((0, cors_1.default)({
+    origin: "https://chat-app-type-script.vercel.app/",
+    methods: ['get', 'post', 'patch', 'put', 'delete'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 const io = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: ["https://chat-app-type-script.vercel.app"],
+        origin: ["https://chat-app-type-script.vercel.app/"],
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -28,11 +34,6 @@ const io = new socket_io_1.Server(httpServer, {
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
-app.use((0, cors_1.default)({
-    origin: "https://chat-app-type-script.vercel.app",
-    methods: ['get', 'post', 'patch', 'put', 'delete'],
-    credentials: true
-}));
 io.on("connection", (socket) => {
     console.log("Server is connecting", socket.id);
     socket.on("join", (userId) => {
