@@ -30,6 +30,7 @@ export default function Dashboard() {
       <div className="w-80  border-r dark:border-gray-700">
         <SideBar 
           currentUserId={user.id} 
+          currentUser={user.username}
           onChatSelect={handleChatSelect} 
           activeChatId={activeChatId}
         />
