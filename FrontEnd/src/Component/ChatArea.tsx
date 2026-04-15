@@ -20,7 +20,7 @@ interface ChatAreaProps {
 }
 
 export default function ChatArea({ initialMessages, currentUserId, otherUserId,receiverName }: ChatAreaProps) {
-  console.log("initial message: ",initialMessages,currentUserId,otherUserId)
+  // console.log("initial message: ",initialMessages,currentUserId,otherUserId)
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [msg, setMsg] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);

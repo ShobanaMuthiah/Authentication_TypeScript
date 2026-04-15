@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Sidebar, SidebarItem, SidebarItemGroup, SidebarItems, TextInput } from "flowbite-react";
 import { HiUser } from "react-icons/hi";
 import { api } from "../utils/api";
+import { socket } from "../utils/socket";
 // import axios from "axios";
 
 interface UserProps {
@@ -23,6 +24,7 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
   const [users, setUsers] = useState<UserProps[]>([]);
   const [searchUser, setSearchUser] = useState<string>("")
   const [newchat, setNewchat] = useState<boolean>(false)
+  const [notifications,setNotifications]=useState<{[key:number]:number}>({})
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -49,6 +51,33 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
 
     fetchChats();
   }, [currentUserId]);
+
+  useEffect(()=>{
+    if(currentUserId){
+      socket.connect();
+      socket.emit("join",currentUserId)
+      const handleReceiveMessage=(data:any)=>{
+        if(data.userId === currentUserId) return;
+        if(data.userId === activeChatId) return;
+    setNotifications(prev => {
+      const updated = {
+        ...prev,
+        [data.userId]: (prev[data.userId] || 0) + 1
+      };
+
+      console.log("updated notifications:", updated);
+
+      return updated;
+    });
+    // alert("getting new message")
+        // console.log("notifications",notifications)
+      }
+      socket.on("receiveMessage",handleReceiveMessage)
+      return ()=>{
+        socket.off("receiveMessage",handleReceiveMessage)
+      }
+    }
+  },[currentUserId,activeChatId])
 
   useEffect(() => {
     const delay = setTimeout(async () => {
@@ -149,8 +178,13 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
               onClick={() => handleUserClick(u)}
               className={`cursor-pointer ${activeChatId === u.id ? 'bg-blue-100 dark:bg-gray-700' : ''}`}
               icon={HiUser}
-              label={""}
-              labelColor="success"
+label={
+  notifications[
+    u.sendid
+      ? (currentUserId === u.sendid ? u.receiverid : u.sendid)
+      : u.id
+  ]?.toString() || ""
+}  labelColor="success"
             >
               {u.sendid ?
                 u.receiver:
