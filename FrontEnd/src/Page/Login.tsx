@@ -121,7 +121,7 @@ export default function Login() {
 
       if (res.status === 200) {
         const data = res.data
-        console.log("data: ", data)
+        // console.log("data: ", data)
         setResponse(data.message)
         if (data.status === "Success") {
           dispatch(signInSuccess(data.user))
