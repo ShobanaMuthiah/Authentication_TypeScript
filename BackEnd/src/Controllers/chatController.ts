@@ -30,12 +30,12 @@ export const userChatList = async (req: Request, res: Response, next: NextFuncti
             'GREATEST(chats.userId, chats.receiverId) as receiverId',
             'MAX(chats.createdAt) as "createdAt"',
             `CASE
-                WHEN chats.userId:=userId
+                WHEN chats.userId=:userId
                 THEN sender.username
                 ELSE receiver.username
             END as username`,
             `CASE
-                WHEN chats.userId:=userId
+                WHEN chats.userId=:userId
                 THEN receiver.username
                 ELSE sender.username
             END as receiver`
