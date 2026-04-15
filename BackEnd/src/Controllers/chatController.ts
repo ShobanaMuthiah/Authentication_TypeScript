@@ -46,7 +46,7 @@ export const userChatList = async (req: Request, res: Response, next: NextFuncti
         .distinctOn(["sendId", "receiverId"])
 
         .where("chats.userId=:userId  OR chats.receiverId=:userId", { userId })
-        .groupBy("sendId, receiverId, sender.username, receiver.username")
+        .groupBy("sendId, receiverId, sender.username, receiver.username,chats.userId")
         .getRawMany();
     res.status(200).json({ chats }).end();
 }
