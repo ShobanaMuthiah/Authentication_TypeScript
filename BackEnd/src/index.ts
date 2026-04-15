@@ -25,10 +25,6 @@ const io = new Server(httpServer, {
 })
 
 
-app.options("*", cors({
-  origin: "https://chat-app-type-script.vercel.app",
-  credentials: true,
-}));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieparser())
