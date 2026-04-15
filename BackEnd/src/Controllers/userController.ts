@@ -135,18 +135,22 @@ export async function oAuth(req: Request, res: Response, next: NextFunction) {
         secure:true,
         maxAge:24*60*60*1000
     })
-    let userId
+    let userId,userData
     if (!user) {
 
         const userCreate = userRepository.create({ email: pa.email, username: pa.name as string })
 
         await userRepository.save(userCreate)
-        userId = userRepository.findOneBy({ email: pa.email })
-        res.status(200).json({ status: "Success",accessToken,user:{email:pa.email,username:pa.name}, message: "Registered Successfully" }).end()
+        userData = await userRepository.findOne({ where:{email: pa.email },
+        select:["id"]})
+        res.status(200).json({ status: "Success",accessToken,user:{email:pa.email,username:pa.name,id:userId}, message: "Registered Successfully" }).end()
     }
 
 
-    res.status(200).json({ status: "Success",accessToken, message: "Logged in Successfully" }).end()
+        userData =await userRepository.findOne({ where:{email: pa.email },
+        select:["id"]})
+        userId=userData?.id
+    res.status(200).json({ status: "Success",user:{email:pa.email,username:pa.name,id:userId},accessToken, message: "Logged in Successfully" }).end()
 
 }
 

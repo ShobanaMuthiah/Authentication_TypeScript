@@ -61,16 +61,16 @@ export default function Login() {
     dispatch(signInStart())
     try {
 
-    const res = await api.post("/user/LoginForm",
-      { email: usermail, password: userpassword }
-    )
+      const res = await api.post("/user/LoginForm",
+        { email: usermail, password: userpassword }
+      )
       console.log(res)
 
       if (res.status === 200) {
-          // setError(false)
-        
-        let data = res.data
+        // setError(false)
 
+        let data = res.data
+        console.log("data: ", data)
         setResponse(data.message)
         if (data.status === "Success") {
           dispatch(signInSuccess(data.user))
@@ -92,13 +92,13 @@ export default function Login() {
         setResponse(res.data.message)
       }
     }
-catch (error) {
+    catch (error) {
 
       setError(true)
-      if(axios.isAxiosError(error)){
-        setResponse(error.response?.data?.message??"Login failed")
+      if (axios.isAxiosError(error)) {
+        setResponse(error.response?.data?.message ?? "Login failed")
       }
-      else{
+      else {
         setResponse(error as string)
 
       }
@@ -106,31 +106,37 @@ catch (error) {
   }
   const handleOauth = async (e: {}) => {
     console.log(e)
-    setResponse("")
-    setUsermail("")
-    setUsername("")
-    console.log(username)
-    setUserpassword("")
-    setToast(false)
+    // setResponse("")
+    // setUsermail("")
+    // setUsername("")
+    // console.log(username)
+    // setUserpassword("")
+    // setToast(false)
     // console.log(e)
 
 
-try {
-    const res = await api.post("/user/loginOAuth", e
-    )
-    
+    try {
+      const res = await api.post("/user/loginOAuth", e
+      )
+
       if (res.status === 200) {
         const data = res.data
+        console.log("data: ", data)
         setResponse(data.message)
         if (data.status === "Success") {
+          dispatch(signInSuccess(data.user))
+          if (!socket.connected) socket.connect();
+          socket.emit('join', data.user.id);
           setError(false)
           navigate('/dashboard')
           return;
         }
         setError(true)
       }
-      else{
-      setError(true)
+      else {
+        
+        signInFailure(true)
+        setError(true)
         setResponse(res.data.message)
 
       }
@@ -138,10 +144,10 @@ try {
     } catch (error) {
 
       setError(true)
-      if(axios.isAxiosError(error)){
-        setResponse(error.response?.data?.message??"Login failed")
+      if (axios.isAxiosError(error)) {
+        setResponse(error.response?.data?.message ?? "Login failed")
       }
-      else{
+      else {
         setResponse(error as string)
 
       }
