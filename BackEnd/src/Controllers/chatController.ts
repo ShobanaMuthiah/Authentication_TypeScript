@@ -29,8 +29,16 @@ export const userChatList = async (req: Request, res: Response, next: NextFuncti
             'LEAST(chats.userId, chats.receiverId) as sendId',
             'GREATEST(chats.userId, chats.receiverId) as receiverId',
             'MAX(chats.createdAt) as "createdAt"',
-            "sender.username as username",
-            "receiver.username as receiver"
+            `CASE
+                WHEN chats.userId:=userId
+                THEN sender.username
+                ELSE receiver.username
+            END as username`,
+            `CASE
+                WHEN chats.userId:=userId
+                THEN receiver.username
+                ELSE sender.username
+            END as receiver`
         ])
         .leftJoin("chats.user", "sender")
         .leftJoin("chats.receiver", "receiver")
