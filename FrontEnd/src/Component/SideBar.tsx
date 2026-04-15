@@ -153,7 +153,7 @@ export default function SideBar({ currentUserId, currentUser, onChatSelect, acti
               labelColor="success"
             >
               {u.sendid ?
-                (u.sendid === currentUserId ? u.username : u.receiver) :
+                u.receiver:
                 u.username}
             </SidebarItem>
           ))}
