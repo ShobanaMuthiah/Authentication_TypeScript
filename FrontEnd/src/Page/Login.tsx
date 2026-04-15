@@ -21,8 +21,6 @@ export default function Login() {
   }, [])
   const [toast, setToast] = useState<boolean>(false)
   const [show, setShow] = useState<boolean>(false)
-
-  const [username, setUsername] = useState<string>("")
   const [usermail, setUsermail] = useState<string>("")
   const [response, setResponse] = useState<string>("")
   const [error, setError] = useState<boolean>(false)
